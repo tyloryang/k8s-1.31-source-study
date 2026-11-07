@@ -10,18 +10,50 @@ Kubernetes v1.31 核心源码的架构学习资料：一份用 [Understand-Anyth
 | 路径 | 内容 |
 | --- | --- |
 | [`docs/k8s-1.31-architecture-guide.md`](docs/k8s-1.31-architecture-guide.md) | 学习文档：整体架构、各组件启动链路与主循环、`kubectl create deployment` 端到端 8 跳、学习路线 |
+| [`docs/debug-guide.md`](docs/debug-guide.md) | 单步调试指南：用图谱生成 Delve 断点，在真实进程里一步步跟调度、控制器、apiserver、kubelet 的调用链 |
 | `.ua/knowledge-graph.json` | 知识图谱（Understand-Anything 格式），10509 个节点、21681 条边 |
 | `.ua/ua-query.py` | 命令行查询工具，只依赖 Python 3 标准库 |
 | `.ua/meta.json`、`.ua/config.json`、`.ua/intermediate/scan-result.json` | 插件元数据：对应 commit、输出语言（zh）、文件清单 |
 
 ## 快速开始
 
+### 1. 准备（只需一次）
+
+把图谱放进 kubernetes 源码目录。网页里看代码、调试器下断点，都要读取图谱旁边的源码。
+
 ```bash
 git clone -b release-1.31 --depth 1 https://github.com/kubernetes/kubernetes.git
 git clone https://github.com/tyloryang/k8s-1.31-source-study.git
-cp -r k8s-1.31-source-study/.ua kubernetes/
+cp -r k8s-1.31-source-study/.ua kubernetes/      # Windows PowerShell: Copy-Item -Recurse k8s-1.31-source-study\.ua kubernetes\
 cd kubernetes
+```
 
+以后更新：`git -C ../k8s-1.31-source-study pull && cp -r ../k8s-1.31-source-study/.ua .`
+
+### 2. 在网页里看调用关系
+
+只需要 Node.js 18 或更高版本，不需要 Claude Code，也不需要 API key。在 kubernetes 目录执行：
+
+```bash
+npx https://github.com/Egonex-AI/Understand-Anything/releases/download/v2.9.8/understand-anything-viewer.tgz .
+```
+
+终端会打印 `Dashboard URL: http://127.0.0.1:5173/?token=...` 并自动打开浏览器；没自动打开就复制整行地址，**一定要带上 `?token=`**。版本固定在 v2.9.8，与生成图谱的插件版本一致。端口被占用会自动换下一个，加 `--port 8080` 可指定端口，`--no-open` 不自动开浏览器。数据只在本机读取，按 Ctrl+C 停止。
+
+页面上：
+
+- **看函数调用了谁、被谁调用**：搜索 `ScheduleOne`、`syncLoopIteration` 等，点击节点，右侧面板显示中文摘要、源码和连接列表。
+- **只看调用边**：筛选面板里边类型只保留 behavioral（即 calls）。
+- **追两点之间的调用路径**：用路径查找，选起点和终点。
+- **按顺序学习**：学习面板里是 14 步中文导览；颜色图例对应 9 个架构层。
+
+图里有 1 万多个节点，建议先从导览进入，或按层、按类型筛选后再看。
+
+已安装 Understand-Anything 插件的话（Claude Code：`/plugin marketplace add Egonex-AI/Understand-Anything`），在 kubernetes 目录运行 `/understand-dashboard` 效果相同，`/understand-chat` 可以直接对图谱提问。
+
+### 3. 在命令行查调用链
+
+```bash
 python3 .ua/ua-query.py tour                          # 14 步学习导览，按顺序列出要读的文件
 python3 .ua/ua-query.py show Scheduler.ScheduleOne    # 中文摘要 + 调用了谁 / 被谁调用
 python3 .ua/ua-query.py chain Kubelet.syncLoopIteration 2   # 展开调用树
@@ -30,9 +62,19 @@ python3 .ua/ua-query.py pkg pkg/kubelet/pleg          # 包的中文总结及包
 python3 .ua/ua-query.py find Reflector                # 按名称搜索节点
 ```
 
-查询工具只读 `.ua/knowledge-graph.json`，不需要 kubernetes 源码也能运行；把源码放在旁边是为了按输出的 `文件:行号` 跳转阅读。
+查询工具只读 `.ua/knowledge-graph.json`，不需要源码也能运行；输出里的 `文件:行号` 可直接跳转阅读。
 
-如果你在本地装了 Understand-Anything 插件（Claude Code：`/plugin marketplace add Egonex-AI/Understand-Anything`），在 kubernetes 根目录运行 `/understand-dashboard` 可以可视化浏览，`/understand-chat` 可以直接对图谱提问。
+### 4. 用调试器一步一步跟
+
+用图谱把调用链变成 Delve 断点，在真实运行的组件里单步执行：
+
+```bash
+make WHAT=cmd/kube-scheduler DBG=1                                   # 关闭优化编译
+python3 .ua/ua-query.py dlv Scheduler.ScheduleOne 1 > /tmp/sched.dlv # 调用树上每个函数一个断点
+dlv exec _output/bin/kube-scheduler --init /tmp/sched.dlv -- --config /tmp/sched.yaml
+```
+
+完整步骤见 [docs/debug-guide.md](docs/debug-guide.md)：kind 集群准备、调度器跟一个 Pod 的调度周期、Deployment → ReplicaSet 控制器调谐、client-go informer、用 local-up-cluster 调 apiserver 与 kubelet、VS Code 配置和 Delve 速查。
 
 ## 图谱概况
 
