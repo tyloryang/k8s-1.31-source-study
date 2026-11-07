@@ -46,6 +46,8 @@ def show(i):
     print(f'[{n["type"]}] {short(i)}\n  {n["summary"]}')
     if n.get("tags"):
         print("  tags:", ", ".join(n["tags"]))
+    if n.get("languageNotes"):
+        print("  Go 语言说明:", n["languageNotes"])
     for title, lst, end in (("calls →", OUT[i], "target"), ("called by ←", IN[i], "source")):
         es = [e for e in lst if e["type"] == "calls"]
         if es:

@@ -9,6 +9,7 @@ Kubernetes v1.31 核心源码的架构学习资料：一份用 [Understand-Anyth
 
 | 路径 | 内容 |
 | --- | --- |
+| [`docs/learning-path.md`](docs/learning-path.md) | **从这里开始**：运维转 Go 开发的学习路线，6 个阶段，每阶段有练习和达标标准 |
 | [`docs/k8s-1.31-architecture-guide.md`](docs/k8s-1.31-architecture-guide.md) | 学习文档：整体架构、各组件启动链路与主循环、`kubectl create deployment` 端到端 8 跳、学习路线 |
 | [`docs/debug-guide.md`](docs/debug-guide.md) | 单步调试指南：用图谱生成 Delve 断点，在真实进程里一步步跟调度、控制器、apiserver、kubelet 的调用链 |
 | `.ua/knowledge-graph.json` | 知识图谱（Understand-Anything 格式），10509 个节点、21681 条边 |
