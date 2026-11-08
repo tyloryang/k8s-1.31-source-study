@@ -1,0 +1,5 @@
+_build/
+__pycache__/
+*.mp4
+*.srt
+vits-melo-tts-zh_en/

@@ -1,0 +1,58 @@
+[
+  ["01-title", [
+    ["01-title-0.png", 6.5, "这期视频讲 Kubernetes 1.31 源码学习的第一周怎么准备，重点是用 GoLand 一步一步调试。"]]],
+  ["02-goals", [
+    ["02-goals-0.png", 3.5, "第一周结束时，你要做到三件事。第一，会用网页图谱、命令行、导览这三件工具查代码。"],
+    ["02-goals-1.png", 3.5, "第二，读得懂 k8s 里最常见的 Go 写法。"],
+    ["02-goals-2.png", 6.0, "第三，写出第一个能跑的 client-go 程序。"]]],
+  ["03-tools", [
+    ["03-tools-0.png", 6.0, "开始前，先花一个小时装工具。Go 要求 1.24.9，用 make 编译时会自动下载；Docker、kind 和 kubectl 用来建本地练习集群；Delve 命令行第二周才用。"],
+    ["03-tools-1.png", 8.0, "Node.js 18 以上用来打开网页图谱；GoLand 是这周调试的主力，它自带调试器；Python 3 用来跑查询脚本。Windows 用户建议在 WSL2 里操作。"]]],
+  ["04-clone", [
+    ["04-clone-0.png", 4.5, "然后拉代码。第一条命令浅克隆 1.31 分支的 kubernetes 源码，大约 340 兆。"],
+    ["04-clone-1.png", 4.0, "第二条拉取图谱和学习资料仓库。"],
+    ["04-clone-2.png", 6.0, "第三条把图谱目录 .ua 复制进源码目录。网页看代码、调试器下断点，都要读取图谱旁边的源码。"]]],
+  ["05-check", [
+    ["05-check-0.png", 6.0, "装好以后用两条命令自检。第一条在源码目录运行 ua-query 的 tour，能列出 14 步学习导览，说明图谱放对了。"],
+    ["05-check-1.png", 8.0, "第二条用 npx 启动网页查看器，终端会打印一个带 token 的地址。打开时一定要带上 token，否则会被拦住。"]]],
+  ["06-rhythm", [
+    ["06-rhythm-0.png", 9.0, "每天两小时左右，节奏固定：回顾十五分钟，读代码、跟调用链一小时，动手写小程序半小时，最后写十五分钟笔记。某个函数卡住超过二十分钟，就先跳过，第二天用调试器停在那里看。"]]],
+  ["07-day1", [
+    ["07-day1-0.png", 10.0, "第一天认识工具和全局。网页里角色选学习，把 14 步导览整体过一遍；读架构文档的整体架构和端到端两节，看懂 8 跳图；再试试 show 和 impl 两个命令。产出是用五句话说清五个组件各管什么。"]]],
+  ["08-day2", [
+    ["08-day2-0.png", 8.5, "第二天速通 Go 语法，过一遍 A Tour of Go 的基础、方法和接口两章，再用 go mod init 建一个练习模块。产出是一个定义了接口和两个实现的小程序。"]]],
+  ["09-day3", [
+    ["09-day3-0.png", 10.0, "第三天专攻接口。用 impl Policy 查出 CPU 管理器的两个策略实现，对照着读；再顺着 NewManager 看 kubelet 启动时怎么选策略。然后照着写一个按配置选择实现的小程序。"]]],
+  ["10-day4", [
+    ["10-day4-0.png", 11.0, "第四天学 goroutine、channel 和 select。过完 Tour of Go 的并发一章，就去读 kubelet 的 syncLoopIteration，它的 select 同时等待八个来源。照着写一个同时监听两个 channel 和一个定时器的循环。"]]],
+  ["11-day5", [
+    ["11-day5-0.png", 10.0, "第五天看 context、错误处理和泛型。ScheduleOne 用两个 context 分别控制调度和绑定；ErrImagePullBackOff 是包级的哨兵错误；workqueue 用泛型实现。然后给第四天的循环加上 context 退出和错误返回。"]]],
+  ["12-day6", [
+    ["12-day6-0.png", 11.0, "第六天读懂 informer。按导览第七、八步读 reflector、shared informer 和 workqueue。数据流是：Reflector 列表加监听，DeltaFIFO 按 key 聚合增量，HandleDeltas 先更新本地缓存，再调用你的回调。今天顺便用 kind 建好练习集群。"]]],
+  ["13-day7", [
+    ["13-day7-0.png", 11.0, "第七天写第一个 client-go 程序：SharedInformer 监听 Pod，把 key 放进 workqueue，worker 取出 key，再从 Lister 读对象打印。这就是所有控制器的骨架。程序跑起来以后，用 GoLand 一步一步跟一遍。"]]],
+  ["13a-goland-title", [
+    ["13a-goland-title-0.png", 7.0, "下面是重点：用 GoLand 调试第七天的程序，从你的代码一路单步进入 client-go 源码，亲眼看 informer 怎么把 Pod 事件送到你手里。"]]],
+  ["13b-goland-prep", [
+    ["13b-goland-prep-0.png", 10.0, "先准备项目。在练习模块里用 go get 把 client-go、api、apimachinery 都固定到 v0.31.14，这样单步进入源码后，行号和图谱一致。然后用 GoLand 打开这个目录，在设置里选好本机的 Go。"]]],
+  ["13c-goland-config", [
+    ["13c-goland-config-0.png", 11.0, "第二步建运行配置。打开 Run 菜单的 Edit Configurations，点加号选 Go Build。名字填 pod-watcher，Run kind 选 Directory，环境变量设置 KUBECONFIG，指向用 kind get kubeconfig 导出的文件。"]]],
+  ["13d-goland-bp", [
+    ["13d-goland-bp-0.png", 12.0, "第三步打断点。在 AddFunc 第一行的行号旁边单击，出现红点就是断点，也可以按 Ctrl+F8。再连按两下 Shift 搜索 HandleDeltas，在这个函数的第一行也打一个断点。"]]],
+  ["13e-goland-debug", [
+    ["13e-goland-debug-0.png", 12.0, "第四步，点小虫图标或者按 Shift+F9 启动调试。停下以后看左下角的调用栈：你的回调是在 processorListener 的 run 这个 goroutine 里被调用的。右边变量面板展开 obj，能看到 Pod 的名字和命名空间。"]]],
+  ["13f-goland-keys", [
+    ["13f-goland-keys-0.png", 13.0, "这八个按键要记住：F8 单步跳过，F7 单步进入，Shift+F7 在多个调用里选一个进入，Shift+F8 跳出当前函数，F9 运行到下一个断点，Alt+F9 运行到光标处，Alt+F8 计算表达式，Ctrl+F2 停止调试。"]]],
+  ["13g-goland-walk", [
+    ["13g-goland-walk-0.png", 5.0, "现在实战，跟一个 Pod 事件走一遍。启动时的全量列表会让 HandleDeltas 连停很多次，先按 Ctrl+Shift+F8 暂时禁用它，等已有的 Pod 打印完再启用。然后在终端用 kubectl run 创建一个 nginx。"],
+    ["13g-goland-walk-1.png", 6.0, "程序先停在 HandleDeltas，这里是 informer 处理增量的入口。按 F7 进入 processDeltas。"],
+    ["13g-goland-walk-2.png", 9.0, "再按 F8 一行一行走：先执行 clientState.Add 更新本地缓存，再调用 handler.OnAdd 分发事件。按 F9 继续，就停在你写的 AddFunc 里，调用栈显示已经换到了另一个 goroutine。"]]],
+  ["13h-goland-cond", [
+    ["13h-goland-cond-0.png", 12.0, "几个实用技巧。条件断点：右键红点，在 Condition 里填 key 等于 default/nginx，只在这个对象上停，注意要打在 key 已经赋值之后的那一行。变量面板可以逐层展开对象，Alt+F8 计算任意表达式，Ctrl+Shift+F8 统一管理断点。"]]],
+  ["13i-goland-week2", [
+    ["13i-goland-week2-0.png", 11.0, "第二周用同样的方法调试 kube-scheduler：用 GoLand 打开整个 kubernetes 源码目录，Run kind 选 Package，路径填 cmd/kube-scheduler，再加上配置参数。断点位置用 ua-query 的 chain 查出文件和行号，按 Ctrl+G 跳过去。"]]],
+  ["14-gate", [
+    ["14-gate-0.png", 11.0, "第一周的验收标准：client-go 程序在 kind 上跑通，并且能讲清 informer 本地缓存和直接请求 apiserver 的区别。看不出接口背后的实现就用 impl 查；Go 语法看不懂先看节点的 Go 语言说明；进度落后的话，第七天的程序也不要省。"]]],
+  ["15-end", [
+    ["15-end-0.png", 7.0, "所有材料都在这个 GitHub 仓库里，学习路线和调试指南在 docs 目录。祝学习顺利。"]]]
+]
