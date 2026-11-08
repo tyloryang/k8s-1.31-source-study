@@ -10,6 +10,8 @@
 
 ## 1. 准备环境
 
+不需要先用 kubeadm 搭集群：场景 A、B 用 kind，场景 C 用 local-up-cluster。为什么这样选、kind 和 kubeadm 的区别，见 [调试环境怎么选](environment.md)。
+
 | 工具 | 说明 |
 | --- | --- |
 | Go | 源码的 `.go-version` 指定 Go 1.24.9。`make` 默认会自动下载这个版本的工具链；离线时可以加 `FORCE_HOST_GO=1` 用本机已装的 Go |

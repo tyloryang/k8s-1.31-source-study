@@ -12,6 +12,8 @@
 | `ua-query.py` | 命令行快速查函数、展开调用树、查接口实现 | [README · 在命令行查调用链](../README.md#3-在命令行查调用链) |
 | Delve 调试器 | 在真实运行的组件里一步步走调用链 | [调试指南](debug-guide.md) |
 
+调试用的集群选 kind 就够了，不需要先用 kubeadm 搭，原因见 [调试环境怎么选](environment.md)。
+
 想先看一遍第一周怎么准备、GoLand 怎么单步调试，可以看 [视频](video/)（7 分钟，中文配音）。
 
 下文的命令都在 kubernetes 源码根目录执行，并已按 README 把 `.ua/` 复制进去。
